@@ -1,0 +1,9 @@
+#Archivos de entorno secretos
+.env
+.env.local
+
+#entorno virtual
+venv/
+__pycache__/
+*.pyc
+.DS_Store
