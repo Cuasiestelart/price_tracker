@@ -1,10 +1,11 @@
 import time
 from database import get_all_products, log_price
 from src.scraper import scrape_product
+from notifier import send_price_alert
 
 #selectores por defecto (de momento solo amazon)
-DEFAULT_PRICE_SELECTOR = "span.a_offscreen"
-DEFAULT_TITLE_SELECTOR = "#producTitle"
+DEFAULT_PRICE_SELECTOR = "span.a-offscreen"
+DEFAULT_TITLE_SELECTOR = "#productTitle"
 
 def track_all_products():
     """Recorre la lista de productos, raspa el precio actual y lo guarda en Supabase"""
@@ -44,6 +45,13 @@ def track_all_products():
         #3. Verificación de alerta
         if current_price <= target_price:
             print(f"  !OFERTA ALCANZADA¡ {prod_name} está a ${current_price:,.2f} (Meta: ${target_price:,.2f})")
+            #3.1 Notificación a correo
+            send_price_alert(
+                product_name=prod_name,
+                current_price=current_price,
+                target_price=target_price,
+                product_url=prod_url
+            )
         else:
             diferencia = current_price - target_price
             print(f"Aún falta bajar ${diferencia:,.2f} para alcanzar la meta.")
